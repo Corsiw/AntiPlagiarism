@@ -1,0 +1,25 @@
+﻿services:
+  gateway.api:
+    image: gateway.api
+    build:
+      context: .
+      dockerfile: src/Works/Works.API/Dockerfile
+
+  works.api:
+    image: works.api
+    build:
+      context: .
+      dockerfile: src/Works/Works.API/Dockerfile
+
+  filestorage.api:
+    image: filestorage.api
+    build:
+      context: .
+      dockerfile: src/FileStorage/FileStorage.API/Dockerfile
+
+  analysis.api:
+    image: analysis.api
+    build:
+      context: .
+      dockerfile: src/Analysis/Analysis.API/Dockerfile
+
