@@ -3,6 +3,7 @@
 services:
   gateway.api:
     image: gateway.api
+    container_name: gateway.api
     build:
       context: .
       dockerfile: src/Gateway/Gateway.API/Dockerfile
@@ -23,6 +24,7 @@ services:
 
   works.api:
     image: works.api
+    container_name: works.api
     build:
       context: .
       dockerfile: src/Works/Works.API/Dockerfile
@@ -36,6 +38,7 @@ services:
 
   filestorage.api:
     image: filestorage.api
+    container_name: filestorage.api
     build:
       context: .
       dockerfile: src/FileStorage/FileStorage.API/Dockerfile
@@ -49,6 +52,7 @@ services:
 
   analysis.api:
     image: analysis.api
+    container_name: analysis.api
     build:
       context: .
       dockerfile: src/Analysis/Analysis.API/Dockerfile

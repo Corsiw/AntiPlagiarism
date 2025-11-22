@@ -12,6 +12,10 @@ namespace Gateway.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            // YARP ReverseProxy
+            builder.Services.AddReverseProxy()
+                .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
             WebApplication app = builder.Build();
 
@@ -21,8 +25,6 @@ namespace Gateway.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
@@ -45,7 +47,9 @@ namespace Gateway.API
                 })
                 .WithName("GetWeatherForecast")
                 .WithOpenApi();
-
+            
+            app.MapReverseProxy();
+            
             app.Run();
         }
     }
