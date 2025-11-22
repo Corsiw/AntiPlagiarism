@@ -23,7 +23,13 @@ namespace Gateway.API
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                // Use multiple endpoints for all microservices
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/works/swagger/v1/swagger.json", "Works API v1");
+                    c.SwaggerEndpoint("/files/swagger/v1/swagger.json", "Files API v1");
+                    c.SwaggerEndpoint("/analysis/swagger/v1/swagger.json", "Analysis API v1");
+                });
             }
 
             app.UseAuthorization();

@@ -1,49 +1,53 @@
-namespace Analysis.API;
-
-public class Program
+namespace Analysis.API
 {
-    public static void Main(string[] args)
+    public abstract class Program
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Services.AddAuthorization();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        public static void Main(string[] args)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        app.UseAuthorization();
+            // Add services to the container.
+            builder.Services.AddAuthorization();
 
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+            WebApplication app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
             {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Analysis.API V1");
+                });
+            }
 
-        app.Run();
+            app.UseAuthorization();
+
+            var summaries = new[]
+            {
+                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            };
+
+            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+                {
+                    var forecast = Enumerable.Range(1, 5).Select(index =>
+                            new WeatherForecast
+                            {
+                                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                                TemperatureC = Random.Shared.Next(-20, 55),
+                                Summary = summaries[Random.Shared.Next(summaries.Length)]
+                            })
+                        .ToArray();
+                    return forecast;
+                })
+                .WithName("GetWeatherForecast")
+                .WithOpenApi();
+
+            app.Run();
+        }
     }
 }
