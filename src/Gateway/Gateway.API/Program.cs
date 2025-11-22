@@ -1,6 +1,6 @@
 namespace Gateway.API
 {
-    public class Program
+    public abstract class Program
     {
         public static void Main(string[] args)
         {
@@ -26,14 +26,14 @@ namespace Gateway.API
 
             app.UseAuthorization();
 
-            string[] summaries =
-            [
+            string[] summaries = new[]
+            {
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            ];
+            };
 
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
                 {
-                    WeatherForecast[] forecast = Enumerable.Range(1, 5).Select(index =>
+                    var forecast = Enumerable.Range(1, 5).Select(index =>
                             new WeatherForecast
                             {
                                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

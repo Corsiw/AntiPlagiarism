@@ -1,25 +1,65 @@
-﻿services:
+﻿version: '3.9'
+
+services:
   gateway.api:
     image: gateway.api
     build:
       context: .
-      dockerfile: src/Works/Works.API/Dockerfile
+      dockerfile: src/Gateway/Gateway.API/Dockerfile
+    ports:
+      - "8080:8080" # Expose to localhost
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      works.api:
+        condition: service_started
+      filestorage.api:
+        condition: service_started
+      analysis.api:
+        condition: service_started
+    networks:
+      - backend
 
   works.api:
     image: works.api
     build:
       context: .
       dockerfile: src/Works/Works.API/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8081
+      - ASPNETCORE_ENVIRONMENT=Development
+    expose:
+      - "8081"
+    networks:
+      - backend
 
   filestorage.api:
     image: filestorage.api
     build:
       context: .
       dockerfile: src/FileStorage/FileStorage.API/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8082
+      - ASPNETCORE_ENVIRONMENT=Development
+    expose:
+      - "8082"
+    networks:
+      - backend
 
   analysis.api:
     image: analysis.api
     build:
       context: .
       dockerfile: src/Analysis/Analysis.API/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8083
+      - ASPNETCORE_ENVIRONMENT=Development
+    expose:
+      - "8083"
+    networks:
+      - backend
 
+networks:
+  backend:
+    driver: bridge
