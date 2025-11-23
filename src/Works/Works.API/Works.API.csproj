@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Endpoints\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Works.Application\Works.Application.csproj" />
       <ProjectReference Include="..\Works.Infrastructure\Works.Infrastructure.csproj" />
     </ItemGroup>

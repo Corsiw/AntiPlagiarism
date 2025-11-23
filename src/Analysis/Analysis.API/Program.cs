@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.HttpOverrides;
+
 namespace Analysis.API
 {
     public abstract class Program
@@ -46,6 +48,13 @@ namespace Analysis.API
                 })
                 .WithName("GetWeatherForecast")
                 .WithOpenApi();
+            
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto |
+                                   ForwardedHeaders.XForwardedHost
+            });
 
             app.Run();
         }
