@@ -31,10 +31,26 @@ services:
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:8081
       - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - works_data:/app/works.db
     expose:
       - "8081"
     networks:
       - backend
+  
+#  works.db:
+#    image: postgres:16
+#    container_name: works.db
+#    environment:
+#      - POSTGRES_DB=works_db
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#    ports:
+#      - "5432"
+#    volumes:
+#      - works_data:/var/lib/postgresql/data
+#    networks:
+#      - backend
 
   filestorage.api:
     image: filestorage.api
@@ -67,3 +83,6 @@ services:
 networks:
   backend:
     driver: bridge
+
+volumes:
+  works_data:

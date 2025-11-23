@@ -1,10 +1,13 @@
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Works.API
 {
     public abstract class Program
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddAuthorization();
@@ -12,6 +15,13 @@ namespace Works.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            // Configure Sqlite in appsettings.json
+            builder.Services.AddDbContext<WorksDbContext>(options =>
+            {
+                string? connectionString = builder.Configuration.GetConnectionString("WorksDatabase");
+                options.UseSqlite(connectionString);
+            });
 
             WebApplication app = builder.Build();
 
@@ -47,6 +57,12 @@ namespace Works.API
                 .WithName("GetWeatherForecast")
                 .WithOpenApi();
 
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                WorksDbContext db = scope.ServiceProvider.GetRequiredService<WorksDbContext>();
+                db.Database.Migrate();   // создаёт works.db и таблицы
+            }
+            
             app.Run();
         }
     }

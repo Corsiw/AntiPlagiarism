@@ -56,4 +56,7 @@ nunit-*.xml
 # IDE
 .idea/
 .editorconfig
-.certs
+.certs/
+
+# appsettings with confidential information
+**/appsettings.Development.json
