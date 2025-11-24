@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+using Works.API.Forms;
 using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.AnalyzeWork;
 using Works.Application.UseCases.AttachFile;
@@ -67,15 +69,23 @@ namespace Works.API.Endpoints
 
         private static RouteGroupBuilder MapAttachFile(this RouteGroupBuilder group)
         {
-            group.MapPost("{workId:guid}/file", async (Guid workId, AttachFileRequest request, IAttachFileRequestHandler handler) =>
+            group.MapPost("{workId:guid}/file", async (Guid workId, [FromForm] AttachFileForm form, IAttachFileRequestHandler handler) =>
                 {
+                    IFormFile file = form.File;
+                    AttachFileRequest request = new(
+                        file.OpenReadStream(),
+                        file.FileName,
+                        file.ContentType
+                    );
+                    
                     AttachFileResponse response = await handler.HandleAsync(workId, request);
                     return Results.Ok(response);
                 })
                 .WithName("AttachFile")
                 .WithSummary("Attach file to work")
                 .WithDescription("Upload a file and attach it to an existing work")
-                .WithOpenApi();
+                .WithOpenApi()
+                .DisableAntiforgery();
             return group;
         }
 

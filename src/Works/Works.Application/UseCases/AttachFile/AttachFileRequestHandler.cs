@@ -4,7 +4,7 @@ using Works.Application.Interfaces;
 
 namespace Works.Application.UseCases.AttachFile
 {
-    public class AttachFileRequestHandler(IRepository<Work> repository) : IAttachFileRequestHandler
+    public class AttachFileRequestHandler(IRepository<Work> repository, IFileStorageClient fileStorage) : IAttachFileRequestHandler
     {
         public async Task<AttachFileResponse> HandleAsync(Guid workId, AttachFileRequest request)
         {
@@ -14,10 +14,18 @@ namespace Works.Application.UseCases.AttachFile
                 throw new KeyNotFoundException("Work not found");
             }
 
-            work.FileId = request.FileId;
-            work.Status = WorkStatus.FileUploaded;
-
+            string fileId = await fileStorage.UploadAsync(
+                request.FileStream,
+                request.FileName,
+                request.ContentType
+                );
+            
+            work.AttachFile(fileId);
             await repository.UpdateAsync(work);
+            
+            // TODO automatic analysis
+            //
+            //
 
             return new AttachFileResponse(work.WorkId, work.FileId!, work.Status.ToString());
         }

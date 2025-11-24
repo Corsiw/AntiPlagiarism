@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.Enums;
 using Works.Application.Interfaces;
 
 namespace Works.Application.UseCases.AnalyzeWork
@@ -13,12 +12,16 @@ namespace Works.Application.UseCases.AnalyzeWork
             {
                 throw new KeyNotFoundException("Work not found");
             }
-
-            work.Status = WorkStatus.Analyzed;
-            work.ReportId = Guid.NewGuid();
-            work.PlagiarismFlag = false;
-            work.AnalysisRequestedAt = DateTime.UtcNow;
-            work.AnalysisCompletedAt = DateTime.UtcNow;
+            
+            // TODO analysis
+            
+            
+            // work.AttachReport();
+            // work.Status = WorkStatus.Analyzed;
+            // work.ReportId = Guid.NewGuid();
+            // work.PlagiarismFlag = false;
+            // work.AnalysisRequestedAt = DateTime.UtcNow;
+            // work.AnalysisCompletedAt = DateTime.UtcNow;
 
             await repository.UpdateAsync(work);
 

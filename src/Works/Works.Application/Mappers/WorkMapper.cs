@@ -10,14 +10,7 @@ namespace Works.Application.Mappers
     {
         public Work MapAddWorkRequestToEntity(AddWorkRequest request)
         {
-            return new Work
-            {
-                WorkId = Guid.NewGuid(),
-                StudentId = request.StudentId,
-                AssignmentId = request.AssignmentId,
-                SubmissionTime = DateTime.UtcNow,
-                Status = WorkStatus.Created
-            };
+            return new Work(request.StudentId, request.AssignmentId);
         }
 
         public AddWorkResponse MapEntityToAddWorkResponse(Work work)
