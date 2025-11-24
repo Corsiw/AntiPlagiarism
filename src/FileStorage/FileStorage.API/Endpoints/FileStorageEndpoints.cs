@@ -54,6 +54,5 @@ namespace FileStorage.API.Endpoints
                 .DisableAntiforgery();
             return group;
         }
-        
     }
 }

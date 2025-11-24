@@ -1,3 +1,5 @@
+using Infrastructure.DTO;
+using System.Net.Http.Json;
 using Works.Application.Interfaces;
 
 namespace Infrastructure.Clients
@@ -12,17 +14,16 @@ namespace Infrastructure.Clients
             return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<string> UploadAsync(Stream content, string fileName, string contentType)
+        public async Task<string> UploadAsync(Stream stream, string fileName, string contentType)
         {
-            MultipartFormDataContent form = new()
-            {
-                { new StreamContent(content), fileName, $"{fileName}.bin" }
-            };
+            using MultipartFormDataContent content = new();
+            content.Add(new StreamContent(stream), "file", fileName);
 
-            HttpResponseMessage response = await client.PostAsync("/upload", form);
+            HttpResponseMessage response = await client.PostAsync("/upload", content);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
+            UploadFileResponse? json = await response.Content.ReadFromJsonAsync<UploadFileResponse>();
+            return json!.FileId;
         }
     }
 }
