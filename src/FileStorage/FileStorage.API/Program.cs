@@ -1,4 +1,14 @@
-using Microsoft.AspNetCore.HttpOverrides;
+using Domain.Entities;
+using FileStorage.API.Endpoints;
+using FileStorage.Application.Interfaces;
+using FileStorage.Application.Mappers;
+using FileStorage.Application.UseCases.GetFileById;
+using FileStorage.Application.UseCases.UploadFile;
+using FileStorage.Infrastructure.Data;
+using FileStorage.Infrastructure.Repositories;
+using FileStorage.Infrastructure.StorageProviders;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace FileStorage.API
 {
@@ -7,13 +17,53 @@ namespace FileStorage.API
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
+            
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SupportNonNullableReferenceTypes();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FileStorage API", Version = "v1" });
+
+                // Указываем basePath, который будет отображаться в Swagger UI
+                c.AddServer(new OpenApiServer
+                {
+                    Url = "/files", // здесь префикс Gateway
+                    Description = "Access via API Gateway"
+                });
+            });
+            
+            // Configure Sqlite in appsettings.json
+            builder.Services.AddDbContext<FileRecordsDbContext>(options =>
+            {
+                string? connectionString = builder.Configuration.GetConnectionString("FileStorageDatabase");
+                options.UseSqlite(connectionString);
+            });
+            
+            builder.Services.AddScoped<IRepository<FileRecord>>(sp =>
+            {
+                FileRecordsDbContext dbContext = sp.GetRequiredService<FileRecordsDbContext>();
+                EfRepository<FileRecord> efRepo = new(dbContext);
+                return efRepo;
+            });
+            
+            builder.Services.AddScoped<IFileStorageProvider>(sp =>
+            {
+                string connectionString = builder.Configuration.GetConnectionString("FileStorageFiles")
+                                          ?? throw new InvalidOperationException("FileStorage connection string not found. Check appsettings.json");
+                LocalFileStorageProvider provider = new(connectionString);
+                return provider;
+            });
+            
+            builder.Services.AddScoped<IUploadFileHandler, UploadFileHandler>();
+            builder.Services.AddScoped<IGetFileByIdRequestHandler, GetFileByIdRequestHandler>();
+            
+            
+            builder.Services.AddScoped<IFileRecordMapper, FileRecordMapper>();
+            // builder.Services.AddScoped<IFileRecordMapper>(sp =>
+            // {
+            //     
+            // });
 
             WebApplication app = builder.Build();
 
@@ -26,36 +76,15 @@ namespace FileStorage.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "FilesStorage.API V1");
                 });
             }
-
-            app.UseAuthorization();
-
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-                {
-                    var forecast = Enumerable.Range(1, 5).Select(index =>
-                            new WeatherForecast
-                            {
-                                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                                TemperatureC = Random.Shared.Next(-20, 55),
-                                Summary = summaries[Random.Shared.Next(summaries.Length)]
-                            })
-                        .ToArray();
-                    return forecast;
-                })
-                .WithName("GetWeatherForecast")
-                .WithOpenApi();
             
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                   ForwardedHeaders.XForwardedProto |
-                                   ForwardedHeaders.XForwardedHost
-            });
+            app.MapFileStorageEndpoints();
 
+            using (IServiceScope scope = app.Services.CreateScope())
+            { 
+                FileRecordsDbContext db = scope.ServiceProvider.GetRequiredService<FileRecordsDbContext>();
+                db.Database.Migrate();
+            }
+            
             app.Run();
         }
     }

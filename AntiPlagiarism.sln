@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorage.Domain", "src\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Works.Application", "src\Works\Works.Application\Works.Application.csproj", "{F1882F9F-126D-468E-B345-711C74E53DB1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorage.Application", "src\FileStorage\FileStorage.Application\FileStorage.Application.csproj", "{3F0B335F-689F-4408-80F3-08320955615F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorage.Infrastructure", "src\FileStorage\FileStorage.Infrastructure\FileStorage.Infrastructure.csproj", "{7FCD7B5B-FA12-443A-A97C-856663626425}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +62,13 @@ Global
 		{F1882F9F-126D-468E-B345-711C74E53DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1882F9F-126D-468E-B345-711C74E53DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1882F9F-126D-468E-B345-711C74E53DB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0B335F-689F-4408-80F3-08320955615F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0B335F-689F-4408-80F3-08320955615F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0B335F-689F-4408-80F3-08320955615F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0B335F-689F-4408-80F3-08320955615F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FCD7B5B-FA12-443A-A97C-856663626425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FCD7B5B-FA12-443A-A97C-856663626425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FCD7B5B-FA12-443A-A97C-856663626425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FCD7B5B-FA12-443A-A97C-856663626425}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
