@@ -1,16 +1,17 @@
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Analysis.Infrastructure.Data
 {
     public class AnalysisDbContext(DbContextOptions<AnalysisDbContext> options) : DbContext(options)
     {
-        public DbSet<Entities.Analysis> Analysis => Set<Entities.Analysis>();
+        public DbSet<WorkAnalysis> Analysis => Set<WorkAnalysis>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Entities.Analysis>(entity =>
+            modelBuilder.Entity<WorkAnalysis>(entity =>
             {
                 entity.HasKey(a => a.AnalysisId);
 

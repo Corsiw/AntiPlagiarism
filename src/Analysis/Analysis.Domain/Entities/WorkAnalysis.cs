@@ -1,6 +1,6 @@
-namespace Analysis.Entities
+namespace Domain.Entities
 {
-    public class Analysis
+    public class WorkAnalysis
     {
         public Guid AnalysisId { get; init; }
 
@@ -11,7 +11,7 @@ namespace Analysis.Entities
         public bool? PlagiarismFlag { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Analysis(string workId, string fileId)
+        public WorkAnalysis(string workId, string fileId)
         {
             AnalysisId = Guid.NewGuid();
             WorkId = workId;

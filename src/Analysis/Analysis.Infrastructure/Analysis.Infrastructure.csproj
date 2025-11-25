@@ -7,16 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
+        <Folder Include="Migrations\" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.22" />
+        <ProjectReference Include="..\Analysis.Application\Analysis.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Analysis.Application\Analysis.Application.csproj" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.22" />
     </ItemGroup>
-
 </Project>
