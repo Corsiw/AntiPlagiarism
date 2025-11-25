@@ -1,4 +1,9 @@
-using Microsoft.AspNetCore.HttpOverrides;
+using Analysis.Application.Interfaces;
+using Analysis.Infrastructure.Data;
+using Analysis.Infrastructure.Repositories;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Analysis.API
 {
@@ -8,12 +13,34 @@ namespace Analysis.API
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SupportNonNullableReferenceTypes();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Analysis API", Version = "v1" });
+
+                // Указываем basePath, который будет отображаться в Swagger UI
+                c.AddServer(new OpenApiServer
+                {
+                    Url = "/analysis", // здесь префикс Gateway
+                    Description = "Access via API Gateway"
+                });
+            });
+            
+            // Configure Sqlite in appsettings.json
+            builder.Services.AddDbContext<AnalysisDbContext>(options =>
+            {
+                string? connectionString = builder.Configuration.GetConnectionString("FileStorageDatabase");
+                options.UseSqlite(connectionString);
+            });
+            
+            builder.Services.AddScoped<IRepository<WorkAnalysis>>(sp =>
+            {
+                AnalysisDbContext dbContext = sp.GetRequiredService<AnalysisDbContext>();
+                EfRepository<WorkAnalysis> efRepo = new(dbContext);
+                return efRepo;
+            });
 
             WebApplication app = builder.Build();
 
@@ -26,35 +53,12 @@ namespace Analysis.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Analysis.API V1");
                 });
             }
-
-            app.UseAuthorization();
-
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-                {
-                    var forecast = Enumerable.Range(1, 5).Select(index =>
-                            new WeatherForecast
-                            {
-                                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                                TemperatureC = Random.Shared.Next(-20, 55),
-                                Summary = summaries[Random.Shared.Next(summaries.Length)]
-                            })
-                        .ToArray();
-                    return forecast;
-                })
-                .WithName("GetWeatherForecast")
-                .WithOpenApi();
             
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                   ForwardedHeaders.XForwardedProto |
-                                   ForwardedHeaders.XForwardedHost
-            });
+            using (IServiceScope scope = app.Services.CreateScope())
+            { 
+                AnalysisDbContext db = scope.ServiceProvider.GetRequiredService<AnalysisDbContext>();
+                db.Database.Migrate();
+            }
 
             app.Run();
         }

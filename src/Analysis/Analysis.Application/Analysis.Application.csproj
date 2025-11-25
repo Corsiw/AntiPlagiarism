@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Analysis.Domain\Analysis.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UseCases\AnalizeWorkById\" />
+    </ItemGroup>
+
 </Project>

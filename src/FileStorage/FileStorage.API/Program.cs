@@ -60,10 +60,6 @@ namespace FileStorage.API
             
             
             builder.Services.AddScoped<IFileRecordMapper, FileRecordMapper>();
-            // builder.Services.AddScoped<IFileRecordMapper>(sp =>
-            // {
-            //     
-            // });
 
             WebApplication app = builder.Build();
 
