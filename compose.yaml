@@ -1,6 +1,4 @@
-﻿version: '3.9'
-
-services:
+﻿services:
   gateway.api:
     image: gateway.api
     container_name: gateway.api
