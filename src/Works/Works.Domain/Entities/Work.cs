@@ -6,8 +6,8 @@ namespace Domain.Entities
     {
         public Guid WorkId { get; init; }
 
-        public string StudentId { get; init; } = null!;
-        public string AssignmentId { get; init; } = null!;
+        public string StudentId { get; init; }
+        public string AssignmentId { get; init; }
 
         public DateTime SubmissionTime { get; private set; }
 
@@ -28,14 +28,14 @@ namespace Domain.Entities
             AssignmentId = assignmentId;
             SubmissionTime = DateTime.UtcNow;
             Status = WorkStatus.Created;
-            
+
         }
 
         public void AttachFile(string fileId)
         {
             FileId = fileId;
             Status = WorkStatus.FileUploaded;
-            
+
             // Invalidate Report
             ReportId = null;
             PlagiarismFlag = null;
@@ -43,6 +43,7 @@ namespace Domain.Entities
             AnalysisCompletedAt = null;
         }
 
+        // TODO AttachReport
         public void AttachReport(Guid? reportId)
         {
             throw new NotImplementedException();
