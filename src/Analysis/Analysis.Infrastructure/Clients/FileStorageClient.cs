@@ -6,7 +6,7 @@ namespace Analysis.Infrastructure.Clients
 {
     public class FileStorageClient(HttpClient client) : IFileStorageClient
     {
-        public async Task<Stream> DownloadAsync(string fileId)
+        public async Task<Stream> DownloadAsync(Guid fileId)
         {
             HttpResponseMessage response =
                 await client.GetAsync($"/{fileId}", HttpCompletionOption.ResponseHeadersRead);

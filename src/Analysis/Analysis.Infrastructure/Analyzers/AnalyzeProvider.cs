@@ -7,7 +7,7 @@ namespace Analysis.Infrastructure.Analyzers
     {
         public async Task<Report> AnalyzeAsync(AnalysisRecord record)
         {
-            await using Stream fileStream = await fileStorage.DownloadAsync(record.FileId.ToString());
+            await using Stream fileStream = await fileStorage.DownloadAsync(record.FileId);
 
             AnalysisResult result = await strategy.AnalyzeAsync(fileStream, record);
 

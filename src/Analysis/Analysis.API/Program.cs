@@ -1,4 +1,7 @@
+using Analysis.API.Endpoints;
 using Analysis.Application.Interfaces;
+using Analysis.Application.Mappers;
+using Analysis.Application.UseCases.GetReportById;
 using Analysis.Infrastructure.Analyzers;
 using Analysis.Infrastructure.Clients;
 using Analysis.Infrastructure.Data;
@@ -88,6 +91,9 @@ namespace Analysis.API
                 // Operation timeout
                 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
 
+            builder.Services.AddScoped<IGetReportByIdRequestHandler, GetReportByIdRequestHandler>();
+
+            builder.Services.AddScoped<IReportMapper, ReportMapper>();
 
             WebApplication app = builder.Build();
 
@@ -100,6 +106,8 @@ namespace Analysis.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Analysis.API V1");
                 });
             }
+
+            app.MapAnalysisEndpoints();
             
             using (IServiceScope scope = app.Services.CreateScope())
             { 
