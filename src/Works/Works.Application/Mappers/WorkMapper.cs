@@ -30,6 +30,7 @@ namespace Works.Application.Mappers
                 work.StudentId,
                 work.AssignmentId,
                 work.SubmissionTime,
+                work.FileId,
                 work.Status.ToString(),
                 work.ReportId,
                 work.PlagiarismFlag

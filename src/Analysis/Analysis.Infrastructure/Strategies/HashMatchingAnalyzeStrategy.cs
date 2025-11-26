@@ -9,6 +9,12 @@ namespace Analysis.Infrastructure.Strategies
 
     public class HashMatchingAnalyzeStrategy(IContentHashRepository hashRepo) : IAnalyzeStrategy
     {
+        private static string GetFileNameById(Guid id)
+        {
+            return  $"report_{id}_.json";
+        }
+        private static string ContentType => "application/json";
+        
         public async Task<AnalysisResult> AnalyzeAsync(Stream fileStream, AnalysisRecord analysisRecord)
         {
             string hash = await ComputeHashAsync(fileStream);
@@ -16,6 +22,7 @@ namespace Analysis.Infrastructure.Strategies
             ContentHashEntry? earlier = await hashRepo.FindEarlierSubmissionAsync(hash, analysisRecord.StudentId, analysisRecord.SubmittedAt);
 
             bool plagiarism = earlier != null;
+            double similarity = plagiarism ? 100.0 : 0.0;
 
             await hashRepo.AddAsync(new ContentHashEntry(
                 hash,
@@ -26,7 +33,9 @@ namespace Analysis.Infrastructure.Strategies
 
             return new AnalysisResult(
                 plagiarism,
-                1.0,
+                similarity,
+                GetFileNameById(analysisRecord.AnalysisRecordId),
+                ContentType,
                 () => GenerateJsonReportAsync(plagiarism, hash, earlier)
             );
         }
@@ -34,7 +43,11 @@ namespace Analysis.Infrastructure.Strategies
         private static async Task<string> ComputeHashAsync(Stream stream)
         {
             using SHA256 sha = SHA256.Create();
-            stream.Position = 0;
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
             byte[] bytes = await sha.ComputeHashAsync(stream);
             return Convert.ToHexString(bytes);
         }

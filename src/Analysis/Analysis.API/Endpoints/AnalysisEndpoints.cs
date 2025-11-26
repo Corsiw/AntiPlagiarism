@@ -1,3 +1,4 @@
+using Analysis.Application.UseCases.AnalyzeWork;
 using Analysis.Application.UseCases.GetReportById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,25 @@ namespace Analysis.API.Endpoints
         {
             app.MapGroup("/")
                 .WithTags("Analysis")
-                .MapGetReportById();
+                .MapGetReportById()
+                .MapAnalyzeWork();
 
             return app;
         }
+        
+        private static RouteGroupBuilder MapAnalyzeWork(this RouteGroupBuilder group)
+        {
+            group.MapPost("", async ([FromBody] AnalyzeWorkRequest request, [FromServices] IAnalyzeWorkHandler handler) =>
+                {
+                    AnalyzeWorkResponse response = await handler.HandleAsync(request);
+                    return Results.Created($"/analyze/{response.ReportId}", response);
+                })
+                .WithName("AnalyzeWork")
+                .WithSummary("Analyze Work")
+                .WithDescription("Analyze Work and get Report")
+                .WithOpenApi();
+            return group;
+        } 
 
         private static RouteGroupBuilder MapGetReportById(this RouteGroupBuilder group)
         {

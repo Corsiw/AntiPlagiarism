@@ -6,6 +6,7 @@ namespace Works.Application.UseCases.ListWorks
         string StudentId,
         string AssignmentId,
         DateTime SubmissionTime,
+        Guid? FileId,
         string? Status,
         Guid? ReportId,
         bool? PlagiarismFlag

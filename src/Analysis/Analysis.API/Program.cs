@@ -1,6 +1,7 @@
 using Analysis.API.Endpoints;
 using Analysis.Application.Interfaces;
 using Analysis.Application.Mappers;
+using Analysis.Application.UseCases.AnalyzeWork;
 using Analysis.Application.UseCases.GetReportById;
 using Analysis.Infrastructure.Analyzers;
 using Analysis.Infrastructure.Clients;
@@ -92,6 +93,7 @@ namespace Analysis.API
                 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
 
             builder.Services.AddScoped<IGetReportByIdRequestHandler, GetReportByIdRequestHandler>();
+            builder.Services.AddScoped<IAnalyzeWorkHandler, AnalyzeWorkHandler>();
 
             builder.Services.AddScoped<IReportMapper, ReportMapper>();
 

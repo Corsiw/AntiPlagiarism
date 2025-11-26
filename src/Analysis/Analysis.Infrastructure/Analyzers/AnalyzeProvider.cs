@@ -7,25 +7,28 @@ namespace Analysis.Infrastructure.Analyzers
     {
         public async Task<Report> AnalyzeAsync(AnalysisRecord record)
         {
+            record.SetStatusRunning();
+            
             await using Stream fileStream = await fileStorage.DownloadAsync(record.FileId);
 
-            AnalysisResult result = await strategy.AnalyzeAsync(fileStream, record);
+            AnalysisResult analysisResult = await strategy.AnalyzeAsync(fileStream, record);
 
-            using MemoryStream reportFile = await result.GenerateReportFileAsync();
+            using MemoryStream reportFile = await analysisResult.GenerateReportFileAsync();
 
             Guid savedReportFileId = await fileStorage.UploadAsync(
                 reportFile,
-                $"report_{record.AnalysisRecordId}.json",
-                "application/json"
+                analysisResult.FileName,
+                analysisResult.ContentType
             );
 
             Report report = new(
                 record.AnalysisRecordId,
                 savedReportFileId,
-                result.IsPlagiarism,
-                result.Similarity
+                analysisResult.IsPlagiarism,
+                analysisResult.Similarity
             );
-
+            
+            record.AttachReport(report.ReportId);
             return report;
         }
     }
