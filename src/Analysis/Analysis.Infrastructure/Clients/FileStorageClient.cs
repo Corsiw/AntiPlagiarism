@@ -1,8 +1,8 @@
-using Infrastructure.DTO;
+using Analysis.Application.Interfaces;
+using Analysis.Infrastructure.DTO;
 using System.Net.Http.Json;
-using Works.Application.Interfaces;
 
-namespace Infrastructure.Clients
+namespace Analysis.Infrastructure.Clients
 {
     public class FileStorageClient(HttpClient client) : IFileStorageClient
     {

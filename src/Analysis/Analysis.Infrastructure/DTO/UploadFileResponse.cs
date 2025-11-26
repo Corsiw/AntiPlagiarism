@@ -1,4 +1,4 @@
-namespace Infrastructure.DTO
+namespace Analysis.Infrastructure.DTO
 {
     public sealed class UploadFileResponse
     {

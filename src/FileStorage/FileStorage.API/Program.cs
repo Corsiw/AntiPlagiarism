@@ -47,7 +47,7 @@ namespace FileStorage.API
                 return efRepo;
             });
             
-            builder.Services.AddScoped<IFileStorageProvider>(sp =>
+            builder.Services.AddScoped<IFileStorageProvider>(_ =>
             {
                 string connectionString = builder.Configuration.GetConnectionString("FileStorageFiles")
                                           ?? throw new InvalidOperationException("FileStorage connection string not found. Check appsettings.json");
@@ -57,7 +57,6 @@ namespace FileStorage.API
             
             builder.Services.AddScoped<IUploadFileHandler, UploadFileHandler>();
             builder.Services.AddScoped<IGetFileByIdRequestHandler, GetFileByIdRequestHandler>();
-            
             
             builder.Services.AddScoped<IFileRecordMapper, FileRecordMapper>();
 

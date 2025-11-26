@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.Enums;
 using Works.Application.Interfaces;
 
 namespace Works.Application.UseCases.AttachFile
@@ -14,7 +13,7 @@ namespace Works.Application.UseCases.AttachFile
                 throw new KeyNotFoundException("Work not found");
             }
 
-            string fileId = await fileStorage.UploadAsync(
+            Guid fileId = await fileStorage.UploadAsync(
                 request.FileStream,
                 request.FileName,
                 request.ContentType
@@ -27,7 +26,7 @@ namespace Works.Application.UseCases.AttachFile
             //
             //
 
-            return new AttachFileResponse(work.WorkId, work.FileId!, work.Status.ToString());
+            return new AttachFileResponse(work.WorkId, fileId, work.Status.ToString());
         }
     }
 }

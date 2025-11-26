@@ -1,4 +1,4 @@
-namespace Works.Application.Interfaces
+namespace Analysis.Application.Interfaces
 {
     public interface IFileStorageClient
     {

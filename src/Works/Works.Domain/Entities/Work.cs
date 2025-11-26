@@ -11,7 +11,7 @@ namespace Domain.Entities
 
         public DateTime SubmissionTime { get; private set; }
 
-        public string? FileId { get; private set; }
+        public Guid? FileId { get; private set; }
 
         public WorkStatus Status { get; private set; }
 
@@ -28,10 +28,9 @@ namespace Domain.Entities
             AssignmentId = assignmentId;
             SubmissionTime = DateTime.UtcNow;
             Status = WorkStatus.Created;
-
         }
 
-        public void AttachFile(string fileId)
+        public void AttachFile(Guid fileId)
         {
             FileId = fileId;
             Status = WorkStatus.FileUploaded;

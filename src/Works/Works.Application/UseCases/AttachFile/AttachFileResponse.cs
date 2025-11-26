@@ -3,7 +3,7 @@ namespace Works.Application.UseCases.AttachFile
     public record AttachFileResponse
     (
         Guid WorkId,
-        string FileId,
+        Guid FileId,
         string Status
     );
 }

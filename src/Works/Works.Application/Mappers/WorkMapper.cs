@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.Enums;
 using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.GetWorkById;
 using Works.Application.UseCases.ListWorks;

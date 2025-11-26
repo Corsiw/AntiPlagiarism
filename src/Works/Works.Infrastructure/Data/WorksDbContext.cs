@@ -29,8 +29,7 @@ namespace Infrastructure.Data
                 entity.Property(w => w.SubmissionTime)
                       .IsRequired();
 
-                entity.Property(w => w.FileId)
-                      .HasMaxLength(256);
+                entity.Property(w => w.FileId);
 
                 entity.Property(w => w.Status)
                       .HasConversion<int>()   // enum → int

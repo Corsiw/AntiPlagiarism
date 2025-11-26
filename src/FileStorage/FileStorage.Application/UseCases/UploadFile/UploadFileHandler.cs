@@ -9,7 +9,7 @@ namespace FileStorage.Application.UseCases.UploadFile
     {
         public async Task<UploadFileResponse> HandleAsync(UploadFileRequest request)
         {
-            var fileRecord = await mapper.MapUploadFileRequestToEntityAsync(request);
+            FileRecord fileRecord = await mapper.MapUploadFileRequestToEntityAsync(request);
             
             await repository.AddAsync(fileRecord);
 
