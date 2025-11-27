@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Works.Application.DTO.Analysis;
 using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.GetWorkById;
 using Works.Application.UseCases.ListWorks;
@@ -48,6 +49,17 @@ namespace Works.Application.Mappers
                 work.Status.ToString(),
                 work.ReportId,
                 work.PlagiarismFlag
+            );
+        }
+
+        public AnalyzeWorkRequestDto MapEntityToAnalyzeWorkRequest(Work work)
+        {
+            return new AnalyzeWorkRequestDto(
+                work.WorkId,
+                work.FileId ?? throw new KeyNotFoundException("File not attached"),
+                work.StudentId,
+                work.AssignmentId,
+                work.SubmissionTime
             );
         }
     }

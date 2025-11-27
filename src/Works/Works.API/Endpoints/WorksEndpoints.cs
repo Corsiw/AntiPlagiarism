@@ -69,7 +69,7 @@ namespace Works.API.Endpoints
 
         private static RouteGroupBuilder MapAttachFile(this RouteGroupBuilder group)
         {
-            group.MapPost("{workId:guid}/file", async (Guid workId, [FromForm] AttachFileForm form, IAttachFileRequestHandler handler) =>
+            group.MapPatch("{workId:guid}/file", async (Guid workId, [FromForm] AttachFileForm form, IAttachFileRequestHandler handler) =>
                 {
                     IFormFile file = form.File;
                     AttachFileRequest request = new(
@@ -91,7 +91,7 @@ namespace Works.API.Endpoints
 
         private static RouteGroupBuilder MapAnalyzeWork(this RouteGroupBuilder group)
         {
-            group.MapPost("{workId:guid}/analyze", async (Guid workId, IAnalyzeWorkRequestHandler handler) =>
+            group.MapPatch("{workId:guid}/analyze", async (Guid workId, IAnalyzeWorkRequestHandler handler) =>
                 {
                     AnalyzeWorkResponse response = await  handler.HandleAsync(workId);
                     return Results.Ok(response);

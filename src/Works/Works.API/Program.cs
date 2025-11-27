@@ -84,6 +84,31 @@ namespace Works.API
                 // Operation timeout
                 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
 
+            builder.Services.AddHttpClient<IAnalysisClient, AnalysisClient>(client =>
+                {
+                    client.BaseAddress = new Uri("http://analysis.api:8083");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                })
+                // Retry for transient errors (HTTP 5xx, network failure)
+                .AddPolicyHandler(HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .WaitAndRetryAsync(
+                        retryCount: 3,
+                        sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(200 * attempt)
+                    )
+                )
+                // Circuit breaker to stop flooding a failing service
+                .AddPolicyHandler(HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .CircuitBreakerAsync(
+                        handledEventsAllowedBeforeBreaking: 5,
+                        durationOfBreak: TimeSpan.FromSeconds(20)
+                    )
+                )
+                // Operation timeout
+                .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
+
+            
             builder.Services.AddScoped<IRepository<Work>>(sp =>
             {
                 WorksDbContext dbContext = sp.GetRequiredService<WorksDbContext>();

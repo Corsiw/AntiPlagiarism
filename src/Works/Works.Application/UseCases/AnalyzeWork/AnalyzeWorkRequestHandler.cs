@@ -1,9 +1,11 @@
 using Domain.Entities;
+using Works.Application.DTO.Analysis;
 using Works.Application.Interfaces;
+using Works.Application.Mappers;
 
 namespace Works.Application.UseCases.AnalyzeWork
 {
-    public class AnalyzeWorkRequestHandler(IRepository<Work> repository) : IAnalyzeWorkRequestHandler
+    public class AnalyzeWorkRequestHandler(IRepository<Work> repository, IAnalysisClient analysisClient, IWorkMapper mapper) : IAnalyzeWorkRequestHandler
     {
         public async Task<AnalyzeWorkResponse> HandleAsync(Guid workId)
         {
@@ -12,20 +14,15 @@ namespace Works.Application.UseCases.AnalyzeWork
             {
                 throw new KeyNotFoundException("Work not found");
             }
+
+            AnalyzeWorkRequestDto analysisRequestDto = mapper.MapEntityToAnalyzeWorkRequest(work);
+            AnalyzeWorkResponseDto response = await analysisClient.AnalyzeWork(analysisRequestDto);
             
-            // TODO analysis
-            
-            
-            // work.AttachReport();
-            // work.Status = WorkStatus.Analyzed;
-            // work.ReportId = Guid.NewGuid();
-            // work.PlagiarismFlag = false;
-            // work.AnalysisRequestedAt = DateTime.UtcNow;
-            // work.AnalysisCompletedAt = DateTime.UtcNow;
+            work.AttachReport(response.ReportId, response.IsPlagiarism);
 
             await repository.UpdateAsync(work);
 
-            return new AnalyzeWorkResponse(work.WorkId, work.Status.ToString(), work.ReportId);
+            return new AnalyzeWorkResponse(work.WorkId, work.Status.ToString(), response.ReportId, response.FileId, response.IsPlagiarism);
         }
     }
 

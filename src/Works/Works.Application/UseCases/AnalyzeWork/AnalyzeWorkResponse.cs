@@ -4,6 +4,8 @@ namespace Works.Application.UseCases.AnalyzeWork
     (
         Guid WorkId,
         string Status,
-        Guid? ReportId
+        Guid ReportId,
+        Guid ReportFileId,
+        bool PlagiarismFlag
     );
 }

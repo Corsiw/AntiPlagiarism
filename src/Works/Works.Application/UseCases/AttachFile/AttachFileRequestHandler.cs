@@ -21,10 +21,6 @@ namespace Works.Application.UseCases.AttachFile
             
             work.AttachFile(fileId);
             await repository.UpdateAsync(work);
-            
-            // TODO automatic analysis
-            //
-            //
 
             return new AttachFileResponse(work.WorkId, fileId, work.Status.ToString());
         }

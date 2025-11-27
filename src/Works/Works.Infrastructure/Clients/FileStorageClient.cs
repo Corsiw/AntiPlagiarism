@@ -1,4 +1,5 @@
 using Infrastructure.DTO;
+using Infrastructure.DTO.FileStorage;
 using System.Net.Http.Json;
 using Works.Application.Interfaces;
 

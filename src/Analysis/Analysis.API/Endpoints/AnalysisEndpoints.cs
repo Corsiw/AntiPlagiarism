@@ -32,9 +32,9 @@ namespace Analysis.API.Endpoints
 
         private static RouteGroupBuilder MapGetReportById(this RouteGroupBuilder group)
         {
-            group.MapGet("{fileId:guid}", async (Guid fileId, [FromServices] IGetReportByIdRequestHandler handler) =>
+            group.MapGet("{reportId:guid}", async (Guid reportId, [FromServices] IGetReportByIdRequestHandler handler) =>
                 {
-                    GetReportByIdResponse? response = await handler.HandleAsync(fileId);
+                    GetReportByIdResponse? response = await handler.HandleAsync(reportId);
                     return response is not null ? Results.Ok(response) : Results.NotFound();
                 })
                 .WithName("GetReportById")

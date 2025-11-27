@@ -2,34 +2,22 @@ using Domain.Enums;
 
 namespace Domain.Entities
 {
-    public class Work
+    public class Work(string studentId, string assignmentId)
     {
-        public Guid WorkId { get; init; }
+        public Guid WorkId { get; init; } = Guid.NewGuid();
 
-        public string StudentId { get; init; }
-        public string AssignmentId { get; init; }
+        public string StudentId { get; init; } = studentId;
+        public string AssignmentId { get; init; } = assignmentId;
 
-        public DateTime SubmissionTime { get; private set; }
+        public DateTime SubmissionTime { get; private set; } = DateTime.UtcNow;
 
         public Guid? FileId { get; private set; }
 
-        public WorkStatus Status { get; private set; }
+        public WorkStatus Status { get; private set; } = WorkStatus.Created;
 
         public Guid? ReportId { get; private set; }
         public bool? PlagiarismFlag { get; private set; }
-
-        public DateTime? AnalysisRequestedAt { get; private set; }
-        public DateTime? AnalysisCompletedAt { get; private set; }
-
-        public Work(string studentId, string assignmentId)
-        {
-            WorkId = Guid.NewGuid();
-            StudentId = studentId;
-            AssignmentId = assignmentId;
-            SubmissionTime = DateTime.UtcNow;
-            Status = WorkStatus.Created;
-        }
-
+        
         public void AttachFile(Guid fileId)
         {
             FileId = fileId;
@@ -38,14 +26,14 @@ namespace Domain.Entities
             // Invalidate Report
             ReportId = null;
             PlagiarismFlag = null;
-            AnalysisRequestedAt = null;
-            AnalysisCompletedAt = null;
         }
-
-        // TODO AttachReport
-        public void AttachReport(Guid? reportId)
+        
+        public void AttachReport(Guid reportId, bool plagiarismFlag)
         {
-            throw new NotImplementedException();
+            ReportId = reportId;
+            PlagiarismFlag = plagiarismFlag;
+
+            Status = WorkStatus.Analyzed;
         }
     }
 }
