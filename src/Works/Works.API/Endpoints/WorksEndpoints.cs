@@ -4,6 +4,7 @@ using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.AnalyzeWork;
 using Works.Application.UseCases.AttachFile;
 using Works.Application.UseCases.GetReport;
+using Works.Application.UseCases.GetWordCloud;
 using Works.Application.UseCases.GetWorkById;
 using Works.Application.UseCases.ListWorks;
 
@@ -20,7 +21,8 @@ namespace Works.API.Endpoints
                 .MapAddWork()
                 .MapAttachFile()
                 .MapAnalyzeWork()
-                .MapGetReport();
+                .MapGetReport()
+                .MapGetWordCloud();
 
             return app;
         }
@@ -114,6 +116,21 @@ namespace Works.API.Endpoints
                 .WithSummary("Get analysis report for work")
                 .WithDescription("Get the plagiarism report for a specific work")
                 .WithOpenApi();
+            return group;
+        }
+        
+        private static RouteGroupBuilder MapGetWordCloud(this RouteGroupBuilder group)
+        {
+            group.MapGet("{workId:guid}/wordcloud", async (Guid workId, [FromServices] IGetWordCloudRequestHandler handler) =>
+                {
+                    GetWordCloudResponse response = await handler.HandleAsync(workId);
+                    return Results.File(response.FileStream, response.ContentType, response.FileName);
+                })
+                .WithName("GetWordCloud")
+                .WithSummary("Get Word Cloud")
+                .WithDescription("Get Word Cloud from external API")
+                .WithOpenApi()
+                .DisableAntiforgery();
             return group;
         }
     }

@@ -10,9 +10,6 @@ namespace Infrastructure.Clients
     {
         public async Task<AnalyzeWorkResponseDto> AnalyzeWork(AnalyzeWorkRequestDto requestDto)
         {
-            // TODO docker-compose
-            // TODO Облако слов
-            // TODO report.md 
             HttpResponseMessage response = await client.PostAsJsonAsync("/", requestDto);
             
             response.EnsureSuccessStatusCode();

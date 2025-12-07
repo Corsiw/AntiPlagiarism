@@ -14,6 +14,7 @@ using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.AnalyzeWork;
 using Works.Application.UseCases.AttachFile;
 using Works.Application.UseCases.GetReport;
+using Works.Application.UseCases.GetWordCloud;
 using Works.Application.UseCases.GetWorkById;
 using Works.Application.UseCases.ListWorks;
 
@@ -98,6 +99,30 @@ namespace Works.API
                 )
                 // Operation timeout
                 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
+            
+            builder.Services.AddHttpClient<IWordCloudClient, WordCloudClient>(client =>
+                {
+                    client.BaseAddress = new Uri("https://quickchart.io");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                })
+                // Retry for transient errors (HTTP 5xx, network failure)
+                .AddPolicyHandler(HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .WaitAndRetryAsync(
+                        retryCount: 3,
+                        sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(200 * attempt)
+                    )
+                )
+                // Circuit breaker to stop flooding a failing service
+                .AddPolicyHandler(HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .CircuitBreakerAsync(
+                        handledEventsAllowedBeforeBreaking: 5,
+                        durationOfBreak: TimeSpan.FromSeconds(20)
+                    )
+                )
+                // Operation timeout
+                .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(5));
 
             
             builder.Services.AddScoped<IRepository<Work>>(sp =>
@@ -113,6 +138,7 @@ namespace Works.API
             builder.Services.AddScoped<IAttachFileRequestHandler, AttachFileRequestHandler>();
             builder.Services.AddScoped<IAnalyzeWorkRequestHandler, AnalyzeWorkRequestHandler>();
             builder.Services.AddScoped<IGetReportRequestHandler, GetReportRequestHandler>();
+            builder.Services.AddScoped<IGetWordCloudRequestHandler, GetWordCloudRequestHandler>();
             
             builder.Services.AddSingleton<IWorkMapper, WorkMapper>();
 
