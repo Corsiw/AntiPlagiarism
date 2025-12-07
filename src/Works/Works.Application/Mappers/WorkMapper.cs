@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Exceptions;
 using Works.Application.DTO.Analysis;
 using Works.Application.UseCases.AddWork;
 using Works.Application.UseCases.GetWorkById;
@@ -56,7 +57,7 @@ namespace Works.Application.Mappers
         {
             return new AnalyzeWorkRequestDto(
                 work.WorkId,
-                work.FileId ?? throw new KeyNotFoundException("File not attached"),
+                work.FileId ?? throw new NotFoundException("File not attached"),
                 work.StudentId,
                 work.AssignmentId,
                 work.SubmissionTime

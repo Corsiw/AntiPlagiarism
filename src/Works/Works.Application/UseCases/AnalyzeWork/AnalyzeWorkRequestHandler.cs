@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Exceptions;
 using Works.Application.DTO.Analysis;
 using Works.Application.Interfaces;
 using Works.Application.Mappers;
@@ -12,7 +13,7 @@ namespace Works.Application.UseCases.AnalyzeWork
             Work? work = await repository.GetAsync(workId);
             if (work == null)
             {
-                throw new KeyNotFoundException("Work not found");
+                throw new NotFoundException($"Work with workId {workId} not found");
             }
 
             AnalyzeWorkRequestDto analysisRequestDto = mapper.MapEntityToAnalyzeWorkRequest(work);

@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using Works.API.Endpoints;
+using Works.API.Middleware;
 using Works.Application.Interfaces;
 using Works.Application.Mappers;
 using Works.Application.UseCases.AddWork;
@@ -48,16 +49,6 @@ namespace Works.API
                 string? connectionString = builder.Configuration.GetConnectionString("WorksDatabase");
                 options.UseSqlite(connectionString);
             });
-            
-            // Remove AntiForgery cause only API
-            // builder.Services.AddAntiforgery(options =>
-            // {
-            //     options.SuppressXFrameOptionsHeader = true;
-            // });
-            // builder.Services.AddControllers(options =>
-            // {
-            //     options.Filters.Remove(new AutoValidateAntiforgeryTokenAttribute());
-            // });
             
             // Retry Policy
             builder.Services.AddHttpClient<IFileStorageClient, FileStorageClient>(client =>
@@ -137,7 +128,7 @@ namespace Works.API
                 });
             }
         
-            // app.UseAuthorization();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             
             app.MapWorksEndpoints();
 

@@ -60,3 +60,4 @@ nunit-*.xml
 
 # appsettings with confidential information
 **/appsettings.Development.json
+.env

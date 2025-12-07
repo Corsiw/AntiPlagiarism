@@ -1,4 +1,6 @@
-﻿services:
+﻿version: "3.9"
+
+services:
   gateway.api:
     image: gateway.api
     container_name: gateway.api
@@ -6,10 +8,10 @@
       context: .
       dockerfile: src/Gateway/Gateway.API/Dockerfile
     ports:
-      - "8080:8080" # Expose to localhost
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:8080
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_URLS: "http://0.0.0.0:${GATEWAY_PORT}"
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
     depends_on:
       works.api:
         condition: service_started
@@ -19,6 +21,7 @@
         condition: service_started
     networks:
       - backend
+    restart: unless-stopped
 
   works.api:
     image: works.api
@@ -26,15 +29,16 @@
     build:
       context: .
       dockerfile: src/Works/Works.API/Dockerfile
+    expose:
+      - "${WORKS_PORT}"
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:8081
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_URLS: "http://0.0.0.0:${WORKS_PORT}"
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
     volumes:
       - works_data:/app/data/
-    expose:
-      - "8081"
     networks:
       - backend
+    restart: unless-stopped
 
   filestorage.api:
     image: filestorage.api
@@ -42,16 +46,17 @@
     build:
       context: .
       dockerfile: src/FileStorage/FileStorage.API/Dockerfile
+    expose:
+      - "${FILESTORAGE_PORT}"
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:8082
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_URLS: "http://0.0.0.0:${FILESTORAGE_PORT}"
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
     volumes:
       - files_data:/app/data/
       - files_storage:/app/files/
-    expose:
-      - "8082"
     networks:
       - backend
+    restart: unless-stopped
 
   analysis.api:
     image: analysis.api
@@ -59,15 +64,16 @@
     build:
       context: .
       dockerfile: src/Analysis/Analysis.API/Dockerfile
+    expose:
+      - "${ANALYSIS_PORT}"
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:8083
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_URLS: "http://0.0.0.0:${ANALYSIS_PORT}"
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
     volumes:
       - analysis_data:/app/data/
-    expose:
-      - "8083"
     networks:
       - backend
+    restart: unless-stopped
 
 networks:
   backend:

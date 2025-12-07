@@ -1,3 +1,5 @@
+using Domain.Exceptions;
+using System.Net;
 using System.Net.Http.Json;
 using Works.Application.DTO.Analysis;
 using Works.Application.Interfaces;
@@ -8,7 +10,11 @@ namespace Infrastructure.Clients
     {
         public async Task<AnalyzeWorkResponseDto> AnalyzeWork(AnalyzeWorkRequestDto requestDto)
         {
+            // TODO docker-compose
+            // TODO Облако слов
+            // TODO report.md 
             HttpResponseMessage response = await client.PostAsJsonAsync("/", requestDto);
+            
             response.EnsureSuccessStatusCode();
 
             AnalyzeWorkResponseDto? json = await response.Content.ReadFromJsonAsync<AnalyzeWorkResponseDto>();
@@ -19,6 +25,12 @@ namespace Infrastructure.Clients
         {
             HttpResponseMessage response =
                 await client.GetAsync($"/{reportId}", HttpCompletionOption.ResponseHeadersRead);
+            
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException($"Report with ID {reportId} was not found in Analysis service");
+            }
+            
             response.EnsureSuccessStatusCode();
             
             GetReportByIdResponseDto? json = await response.Content.ReadFromJsonAsync<GetReportByIdResponseDto>();

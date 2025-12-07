@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Exceptions;
 using Works.Application.Interfaces;
 
 namespace Works.Application.UseCases.AttachFile
@@ -10,7 +11,7 @@ namespace Works.Application.UseCases.AttachFile
             Work? work = await repository.GetAsync(workId);
             if (work == null)
             {
-                throw new KeyNotFoundException("Work not found");
+                throw new NotFoundException("Work not found");
             }
 
             Guid fileId = await fileStorage.UploadAsync(

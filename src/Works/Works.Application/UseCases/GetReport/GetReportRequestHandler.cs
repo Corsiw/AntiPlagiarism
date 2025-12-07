@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Exceptions;
 using Works.Application.DTO.Analysis;
 using Works.Application.Interfaces;
 
@@ -10,7 +11,7 @@ namespace Works.Application.UseCases.GetReport
         {
             Work? work = await repository.GetAsync(workId);
 
-            Guid reportId = work?.ReportId ?? throw  new KeyNotFoundException($"Report for Work with ID {workId} was not found");
+            Guid reportId = work?.ReportId ?? throw  new NotFoundException($"Report for Work with ID {workId} was not found");
             GetReportByIdResponseDto response = await analysisClient.GetReportById(reportId);
 
             return new GetReportResponse(
