@@ -1,5 +1,6 @@
 using Domain.Entities;
 using FileStorage.API.Endpoints;
+using FileStorage.API.Middleware;
 using FileStorage.Application.Interfaces;
 using FileStorage.Application.Mappers;
 using FileStorage.Application.UseCases.GetFileById;
@@ -71,6 +72,8 @@ namespace FileStorage.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "FilesStorage.API V1");
                 });
             }
+            
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             
             app.MapFileStorageEndpoints();
 

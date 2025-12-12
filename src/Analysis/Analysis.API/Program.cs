@@ -1,4 +1,5 @@
 using Analysis.API.Endpoints;
+using Analysis.API.Middleware;
 using Analysis.Application.Interfaces;
 using Analysis.Application.Mappers;
 using Analysis.Application.UseCases.AnalyzeWork;
@@ -109,6 +110,8 @@ namespace Analysis.API
                 });
             }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+            
             app.MapAnalysisEndpoints();
             
             using (IServiceScope scope = app.Services.CreateScope())

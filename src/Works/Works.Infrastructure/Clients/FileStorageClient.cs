@@ -1,4 +1,6 @@
+using Domain.Exceptions;
 using Infrastructure.DTO.FileStorage;
+using System.Net;
 using System.Net.Http.Json;
 using Works.Application.Interfaces;
 
@@ -10,6 +12,12 @@ namespace Infrastructure.Clients
         {
             HttpResponseMessage response =
                 await client.GetAsync($"/{fileId}", HttpCompletionOption.ResponseHeadersRead);
+            
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException($"File with ID {fileId} was not found in FileStorage service");
+            }
+            
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStreamAsync();
         }

@@ -71,9 +71,15 @@ namespace Works.API.Endpoints
 
         private static RouteGroupBuilder MapAttachFile(this RouteGroupBuilder group)
         {
-            group.MapPatch("{workId:guid}/file", async (Guid workId, [FromForm] AttachFileForm form, IAttachFileRequestHandler handler) =>
+            group.MapPatch("{workId:guid}/file", async (Guid workId, [FromForm] AttachFileForm? form, IAttachFileRequestHandler handler) =>
                 {
+                    if (form?.File == null || form.File.Length == 0)
+                    {
+                        return Results.BadRequest(new { error = "File is required." });
+                    }
+                    
                     IFormFile file = form.File;
+
                     AttachFileRequest request = new(
                         file.OpenReadStream(),
                         file.FileName,

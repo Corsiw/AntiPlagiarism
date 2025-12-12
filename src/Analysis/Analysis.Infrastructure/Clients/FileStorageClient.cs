@@ -1,5 +1,7 @@
 using Analysis.Application.Interfaces;
 using Analysis.Infrastructure.DTO;
+using Domain.Exceptions;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Analysis.Infrastructure.Clients
@@ -10,6 +12,11 @@ namespace Analysis.Infrastructure.Clients
         {
             HttpResponseMessage response =
                 await client.GetAsync($"/{fileId}", HttpCompletionOption.ResponseHeadersRead);
+            
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException($"File with ID {fileId} was not found in FileStorage service");
+            }
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStreamAsync();
         }

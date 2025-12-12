@@ -39,8 +39,13 @@ namespace FileStorage.API.Endpoints
 
         private static RouteGroupBuilder MapPostFile(this RouteGroupBuilder group)
         {
-            group.MapPost("upload", async ([FromForm] AttachFileForm form, [FromServices] IUploadFileHandler handler) =>
+            group.MapPost("upload", async ([FromForm] AttachFileForm? form, [FromServices] IUploadFileHandler handler) =>
                 {
+                    if (form?.File == null || form.File.Length == 0)
+                    {
+                        return Results.BadRequest(new { error = "File is required." });
+                    }
+                    
                     IFormFile file = form.File;
                     UploadFileRequest request = new(file.OpenReadStream(), file.FileName, file.ContentType);
                     UploadFileResponse response = await handler.HandleAsync(request);
