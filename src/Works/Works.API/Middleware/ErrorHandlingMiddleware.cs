@@ -1,4 +1,5 @@
 using Domain.Exceptions;
+using Polly.Timeout;
 using System.Net;
 
 namespace Works.API.Middleware
@@ -36,6 +37,18 @@ namespace Works.API.Middleware
             
                 UnauthorizedException =>
                     HttpStatusCode.Unauthorized,
+                
+                // Таймауты внешних сервисов -> 504
+                TimeoutRejectedException => HttpStatusCode.GatewayTimeout,
+
+                TaskCanceledException { CancellationToken.IsCancellationRequested: false } =>
+                    HttpStatusCode.GatewayTimeout,
+
+                OperationCanceledException { CancellationToken.IsCancellationRequested: false } =>
+                    HttpStatusCode.GatewayTimeout,
+
+                // Сетевая ошибка -> внешний сервис недоступен -> 503
+                HttpRequestException => HttpStatusCode.ServiceUnavailable,
             
                 _ =>
                     HttpStatusCode.InternalServerError
